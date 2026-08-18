@@ -275,55 +275,81 @@ function MobileMenu({
 }) {
   const container = {
     hidden: {},
-    show: { transition: { staggerChildren: 0.04, delayChildren: 0.08 } },
-    exit: { transition: { staggerChildren: 0.015, staggerDirection: -1 } },
+    show: { transition: { staggerChildren: 0.035, delayChildren: 0.12 } },
+    exit: { transition: { staggerChildren: 0.012, staggerDirection: -1 } },
   }
   const item = {
-    hidden: { opacity: 0, y: 12 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: easeLuxe } },
+    hidden: { opacity: 0, y: 14, filter: "blur(4px)" },
+    show: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.45, ease: easeLuxe } },
     exit: { opacity: 0, y: 8, transition: { duration: 0.15 } },
   }
+  const accountHref = user ? (user.role === "GUEST" ? "/account" : "/admin") : "/login"
 
   return (
     <AnimatePresence>
       {open && (
         <>
-          {/* Blurred backdrop — keeps the page visibly behind the glass panel. */}
+          {/* Dimmed, blurred backdrop — the page stays visible behind the glass. */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
+            transition={{ duration: 0.3, ease: easeLuxe }}
             onClick={() => setOpen(false)}
-            className="fixed inset-0 z-40 bg-background/40 backdrop-blur-md lg:hidden"
+            className="fixed inset-0 z-40 bg-foreground/25 backdrop-blur-[6px] lg:hidden"
             aria-hidden
           />
 
-          {/* Compact floating glass sheet — anchored under the navbar, never full-screen. */}
+          {/* Editorial navigation sheet — anchored to the top-right, self-contained. */}
           <motion.div
-            initial={{ opacity: 0, y: -14, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -10, scale: 0.985 }}
-            transition={{ type: "spring", stiffness: 320, damping: 30 }}
-            className="fixed inset-x-3 top-[4.75rem] z-50 sm:inset-x-6 sm:top-[5.25rem] lg:hidden"
+            initial={{ opacity: 0, x: 24, y: -12, scale: 0.97 }}
+            animate={{ opacity: 1, x: 0, y: 0, scale: 1 }}
+            exit={{ opacity: 0, x: 16, y: -8, scale: 0.98 }}
+            transition={{ type: "spring", stiffness: 300, damping: 32, mass: 0.9 }}
+            style={{ transformOrigin: "top right" }}
+            className="fixed right-2.5 top-2.5 z-50 w-[92vw] max-w-[420px] lg:hidden"
           >
             <div
               role="dialog"
               aria-modal="true"
               aria-label="Menu"
-              className="glass-strong glass-reflect mx-auto flex max-h-[82vh] w-full max-w-md flex-col overflow-hidden rounded-3xl border border-border/50 shadow-2xl"
+              className="glass-strong glass-reflect flex max-h-[86dvh] flex-col overflow-hidden rounded-[1.7rem] border border-border/50 shadow-2xl"
             >
+              {/* Compact glass header */}
+              <div className="flex items-center justify-between gap-3 border-b border-border/30 px-4 py-3">
+                <Link href="/" onClick={() => setOpen(false)} className="flex items-center gap-2.5">
+                  <span className="grid size-9 place-items-center rounded-xl bg-primary text-primary-foreground">
+                    <Mountain className="size-4" aria-hidden />
+                  </span>
+                  <span className="flex flex-col leading-none">
+                    <span className="font-display text-[0.95rem] font-semibold tracking-tight">Tukuche Peak</span>
+                    <span className="mt-0.5 text-[0.58rem] font-medium uppercase tracking-[0.22em] text-muted-foreground">
+                      Mustang · Nepal
+                    </span>
+                  </span>
+                </Link>
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => setOpen(false)}
+                  aria-label="Close menu"
+                  className="glass-interactive grid size-11 shrink-0 place-items-center rounded-full border border-border/50 bg-background/40 text-foreground/80 hover:text-foreground"
+                >
+                  <X className="size-5" />
+                </motion.button>
+              </div>
+
+              {/* Editorial navigation groups */}
               <motion.div
                 variants={container}
                 initial="hidden"
                 animate="show"
                 exit="exit"
-                className="flex-1 overflow-y-auto overscroll-contain px-4 py-4"
+                className="flex-1 overflow-y-auto overscroll-contain px-4 py-3"
               >
                 {groups.map((g) => (
-                  <motion.div key={g.id} variants={item} className="border-b border-border/30 py-2.5 first:pt-0 last:border-b-0">
-                    <p className="mb-1.5 flex items-center gap-2 text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-accent">
-                      <span className="grid size-5 place-items-center rounded-md bg-primary/10 text-primary">{g.icon}</span>
+                  <motion.div key={g.id} variants={item} className="py-2 first:pt-1">
+                    <p className="mb-0.5 flex items-center gap-2 px-1 text-[0.64rem] font-semibold uppercase tracking-[0.24em] text-accent">
+                      <span className="text-accent/90">{g.icon}</span>
                       {g.label}
                     </p>
                     <div className="flex flex-col">
@@ -332,10 +358,12 @@ function MobileMenu({
                           key={c.href}
                           href={c.href}
                           onClick={() => setOpen(false)}
-                          className="flex items-center justify-between rounded-xl px-2.5 py-2.5 text-[0.95rem] font-medium tracking-tight transition-colors hover:bg-foreground/5 active:bg-foreground/10"
+                          className="group/link flex items-center justify-between rounded-xl py-2.5 pl-1 pr-2 transition-colors hover:bg-foreground/[0.05] active:bg-foreground/[0.08]"
                         >
-                          {c.label}
-                          <ArrowRight className="size-4 shrink-0 text-muted-foreground" />
+                          <span className="font-display text-[1.2rem] font-medium leading-tight tracking-tight">
+                            {c.label}
+                          </span>
+                          <ArrowRight className="size-4 shrink-0 -translate-x-1 text-muted-foreground/70 opacity-0 transition-all duration-300 group-hover/link:translate-x-0 group-hover/link:opacity-100" />
                         </Link>
                       ))}
                     </div>
@@ -343,48 +371,46 @@ function MobileMenu({
                 ))}
               </motion.div>
 
-              {/* Pinned action footer — always reachable without scrolling past content. */}
+              {/* Actions — one primary CTA, then subtle glass controls. */}
               <motion.div
                 variants={item}
-                className="grid gap-2 border-t border-border/40 bg-background/20 px-4 py-3"
+                className="space-y-2.5 border-t border-border/30 px-4 pt-3 pb-[calc(0.9rem+env(safe-area-inset-bottom))]"
               >
-                <Button asChild size="sm" className="h-10 w-full rounded-xl shimmer">
+                <Button asChild size="lg" className="h-12 w-full rounded-2xl text-[0.95rem] shimmer">
                   <Link href="/book" onClick={() => setOpen(false)}>
                     <BedDouble className="size-4" /> Book your stay
                   </Link>
                 </Button>
-                <div className="grid grid-cols-2 gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-10 w-full rounded-xl"
+                <div className="grid grid-cols-2 gap-2.5">
+                  <button
                     onClick={() => {
                       setOpen(false)
                       setTimeout(openConcierge, 350)
                     }}
+                    className="glass-interactive flex items-center justify-center gap-2 rounded-2xl border border-border/40 bg-background/30 py-3 text-[0.82rem] font-medium text-foreground/85"
                   >
                     <Sparkles className="size-4 text-accent" /> Concierge
-                  </Button>
-                  <Button asChild variant="outline" size="sm" className="h-10 w-full rounded-xl">
-                    <Link href={user ? (user.role === "GUEST" ? "/account" : "/admin") : "/login"} onClick={() => setOpen(false)}>
-                      <UserRound className="size-4" /> {user ? "Account" : "Sign in"}
-                    </Link>
-                  </Button>
-                </div>
-                <div className="grid grid-cols-2 gap-2">
+                  </button>
+                  <Link
+                    href={accountHref}
+                    onClick={() => setOpen(false)}
+                    className="glass-interactive flex items-center justify-center gap-2 rounded-2xl border border-border/40 bg-background/30 py-3 text-[0.82rem] font-medium text-foreground/85"
+                  >
+                    <UserRound className="size-4 text-primary" /> {user ? "Account" : "Sign in"}
+                  </Link>
                   <a
                     href={WHATSAPP}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex h-10 items-center justify-center gap-2 rounded-xl border border-border/60 px-3 text-sm font-medium hover:bg-foreground/5"
+                    className="glass-interactive flex items-center justify-center gap-2 rounded-2xl border border-border/40 bg-background/30 py-3 text-[0.82rem] font-medium text-foreground/85"
                   >
                     <MessageCircle className="size-4 text-primary" /> WhatsApp
                   </a>
                   <a
                     href="tel:+9779851019065"
-                    className="flex h-10 items-center justify-center gap-2 rounded-xl border border-border/60 px-3 text-sm font-medium hover:bg-foreground/5"
+                    className="glass-interactive flex items-center justify-center gap-2 rounded-2xl border border-border/40 bg-background/30 py-3 text-[0.82rem] font-medium text-foreground/85"
                   >
-                    <Phone className="size-4 text-primary" /> Call us
+                    <Phone className="size-4 text-primary" /> Call
                   </a>
                 </div>
               </motion.div>
