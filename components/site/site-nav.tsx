@@ -19,6 +19,7 @@ import {
   Phone,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { ThemeToggle } from "@/components/site/theme-toggle"
 import { cn } from "@/lib/utils"
 import { easeLuxe, springSoft } from "@/lib/motion"
 
@@ -233,6 +234,9 @@ export function SiteNav({ user }: { user: { name: string; role: string } | null 
             </Button>
           )}
 
+          {/* Real light/dark toggle — desktop & tablet */}
+          <ThemeToggle className="hidden sm:grid" />
+
           <Button asChild size="sm" className="hidden rounded-full shimmer sm:inline-flex">
             <Link href="/book">Book your stay</Link>
           </Button>
@@ -328,14 +332,17 @@ function MobileMenu({
                     </span>
                   </span>
                 </Link>
-                <motion.button
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => setOpen(false)}
-                  aria-label="Close menu"
-                  className="glass-interactive grid size-11 shrink-0 place-items-center rounded-full border border-border/50 bg-background/40 text-foreground/80 hover:text-foreground"
-                >
-                  <X className="size-5" />
-                </motion.button>
+                <div className="flex shrink-0 items-center gap-2">
+                  <ThemeToggle className="size-11" />
+                  <motion.button
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => setOpen(false)}
+                    aria-label="Close menu"
+                    className="glass-interactive grid size-11 shrink-0 place-items-center rounded-full border border-border/50 bg-background/40 text-foreground/80 hover:text-foreground"
+                  >
+                    <X className="size-5" />
+                  </motion.button>
+                </div>
               </div>
 
               {/* Editorial navigation groups */}

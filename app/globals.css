@@ -56,22 +56,22 @@
 :root {
   color-scheme: light;
   --background: oklch(0.975 0.006 106);      /* warm alpine paper */
-  --foreground: oklch(0.22 0.012 160);       /* deep ink-green */
+  --foreground: oklch(0.17 0.014 162);       /* crisp near-black ink-green */
   --card: oklch(0.99 0.004 106);
-  --card-foreground: oklch(0.22 0.012 160);
+  --card-foreground: oklch(0.17 0.014 162);
   --popover: oklch(0.99 0.004 106);
-  --popover-foreground: oklch(0.22 0.012 160);
-  --primary: oklch(0.42 0.062 165);          /* deep pine */
-  --primary-foreground: oklch(0.98 0.006 106);
+  --popover-foreground: oklch(0.17 0.014 162);
+  --primary: oklch(0.4 0.066 165);           /* deep pine */
+  --primary-foreground: oklch(0.985 0.006 106);
   --secondary: oklch(0.93 0.01 120);
-  --secondary-foreground: oklch(0.3 0.03 165);
+  --secondary-foreground: oklch(0.26 0.032 165);
   --muted: oklch(0.94 0.008 110);
-  --muted-foreground: oklch(0.5 0.015 150);
-  --accent: oklch(0.72 0.09 75);             /* muted brass */
-  --accent-foreground: oklch(0.22 0.02 80);
+  --muted-foreground: oklch(0.42 0.017 152); /* readable secondary text */
+  --accent: oklch(0.62 0.098 72);            /* deeper, richer brass */
+  --accent-foreground: oklch(0.2 0.02 80);
   --destructive: oklch(0.55 0.2 25);
-  --border: oklch(0.88 0.01 130);
-  --input: oklch(0.9 0.01 130);
+  --border: oklch(0.85 0.012 130);
+  --input: oklch(0.88 0.012 130);
   --ring: oklch(0.42 0.062 165);
   --chart-1: oklch(0.42 0.062 165);
   --chart-2: oklch(0.72 0.09 75);
@@ -104,23 +104,23 @@
 
 .dark {
   color-scheme: dark;
-  --background: oklch(0.19 0.015 165);       /* deep alpine night */
-  --foreground: oklch(0.95 0.008 106);
+  --background: oklch(0.185 0.015 165);      /* deep alpine night */
+  --foreground: oklch(0.97 0.008 106);       /* bright ivory */
   --card: oklch(0.23 0.017 165);
-  --card-foreground: oklch(0.95 0.008 106);
+  --card-foreground: oklch(0.97 0.008 106);
   --popover: oklch(0.23 0.017 165);
-  --popover-foreground: oklch(0.95 0.008 106);
-  --primary: oklch(0.7 0.08 155);            /* luminous pine */
-  --primary-foreground: oklch(0.16 0.015 165);
+  --popover-foreground: oklch(0.97 0.008 106);
+  --primary: oklch(0.72 0.082 155);          /* luminous pine */
+  --primary-foreground: oklch(0.15 0.015 165);
   --secondary: oklch(0.28 0.02 165);
-  --secondary-foreground: oklch(0.95 0.008 106);
+  --secondary-foreground: oklch(0.97 0.008 106);
   --muted: oklch(0.27 0.018 165);
-  --muted-foreground: oklch(0.72 0.015 130);
-  --accent: oklch(0.75 0.1 78);              /* brass */
-  --accent-foreground: oklch(0.18 0.02 80);
+  --muted-foreground: oklch(0.78 0.016 128); /* clearly readable secondary */
+  --accent: oklch(0.78 0.104 78);            /* warm brass */
+  --accent-foreground: oklch(0.17 0.02 80);
   --destructive: oklch(0.65 0.19 25);
-  --border: oklch(0.95 0.01 130 / 0.12);
-  --input: oklch(0.95 0.01 130 / 0.16);
+  --border: oklch(0.95 0.01 130 / 0.16);
+  --input: oklch(0.95 0.01 130 / 0.2);
   --ring: oklch(0.7 0.08 155);
   --chart-1: oklch(0.7 0.08 155);
   --chart-2: oklch(0.75 0.1 78);
@@ -156,10 +156,32 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "ss01", "cv01";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
   h1, h2, h3, h4, .font-display {
     font-family: var(--font-serif);
-    letter-spacing: -0.01em;
+    letter-spacing: -0.015em;
+    color: var(--foreground);
+  }
+  /* Section headings and body copy carry full foreground contrast by default. */
+  h1, h2 { font-weight: 600; }
+  h3, h4 { font-weight: 600; }
+
+  /* Premium, restrained theme transition on the surfaces that change colour.
+     Excludes transforms so Framer Motion animations stay crisp. */
+  body,
+  header, nav, main, footer, section, aside,
+  .glass, .glass-strong, .glass-sheer {
+    transition:
+      background-color 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+      color 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    body, header, nav, main, footer, section, aside,
+    .glass, .glass-strong, .glass-sheer { transition: none; }
   }
 }
 
